@@ -2,6 +2,14 @@
 // 32-bit wrapping ints, 256-value data stack, 64-deep call stack, 256
 // words of memory, IN/PRINT/PUTC I/O, ten traps, 1M-step and 64K-byte
 // output limits. Answers every instance under the input dir.
+//
+// Per-step trap order: step limit, then pc bounds, then opcode validity,
+// then immediate availability, then stack underflow/overflow, and only
+// then instruction traps (div-by-zero, bad address, call/ret depth,
+// output limit). Edge cases: MUL uses Math.imul for 32-bit wrap;
+// INT_MIN/-1 DIV/MOD follow trunc-toward-zero semantics; DIVU/MODU/LTU
+// compare unsigned (>>> 0); shifts mask the count to 5 bits (b & 31);
+// PUSH8 sign-extends its byte.
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 const I = process.env.MAKEFUN_INPUT_DIR ?? '/input';
